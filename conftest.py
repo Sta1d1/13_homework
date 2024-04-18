@@ -17,6 +17,9 @@ def pytest_addoption(parser):
     parser.addoption(
         "--yadriver", action="store_true", default="/home/mikhail/Downloads/drivers/yandexdriver"
     )
+    parser.addoption(
+        "--url", default="http://localhost/"
+    )
 
 
 @pytest.fixture()
@@ -24,6 +27,7 @@ def browser(request):
     browser_name = request.config.getoption("--browser")
     headless_mode = request.config.getoption("--headless")
     yadriver = request.config.getoption("--yadriver")
+    test_url = request.config.getoption("--url")
 
     if browser_name == "ya":
         options = Options()
@@ -46,6 +50,7 @@ def browser(request):
         raise ValueError(f"Browser {browser_name} not supported")
 
     browser.maximize_window()
+    browser.get(test_url)
     
     yield browser
 
