@@ -2,61 +2,48 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+from page_object.base_method import Base_Method as BM
+from page_object.main_page import Main_Page as MP
+from page_object.admin_page import Admin_Page as AP
+from page_object.register_page import Register_Page as RP
+
 
 def test_main_page(browser): 
     """Проверка элементов на главной странице opencart"""
-    WebDriverWait(browser, 1).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="logo"]/a/img')))
-    WebDriverWait(browser, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="narbar-menu"]/ul/li[6]')))
-    WebDriverWait(browser, 1).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="content"]/div[2]/div[3]/div/div[1]')))
-    WebDriverWait(browser, 1).until_not(EC.visibility_of_element_located((By.XPATH, '//*[@id="test"]')))
-    WebDriverWait(browser, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="search"]/input[3]')))
+    MP(browser=browser).check_5_elem_on_main_page()
+    
    
 def test_catalog(browser):
     """Проверка элементов на странице <Каталог>"""
-    browser.get(browser.current_url + 'index.php?route=product/category&language=en-gb&path=25_28')
-    WebDriverWait(browser, 1).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="logo"]')))
-    test_check_url = browser.current_url
-    if test_check_url != 'http://localhost/index.php?route=product/category&language=en-gb&path=25_28':
-        raise ValueError(f'Адреса не равны: {test_check_url}')
-    WebDriverWait(browser, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="header-cart"]/div/button')))
-    WebDriverWait(browser, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="product-list"]/div[2]/div/div[2]/div/h4')))
-    WebDriverWait(browser, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="search"]/input[3]')))
+    BM(browser=browser).add_to_the_link_in_the_browser(link_continuation='index.php?route=product/category&language=en-gb&path=25_28')
+    BM(browser=browser).element_visibility(selector='//*[@id="logo"]')
+    BM(browser=browser).comparing_the_current_address(address='http://localhost/index.php?route=product/category&language=en-gb&path=25_28')
+    BM(browser=browser).element_clickable(selector='//*[@id="header-cart"]/div/button')
+    BM(browser=browser).element_clickable(selector='//*[@id="product-list"]/div[2]/div/div[2]/div/h4')
+    BM(browser=browser).element_clickable(selector='//*[@id="search"]/input[3]')
 
 def test_product_cart(browser):
     """Проверка элементов на странице <Карточка товара>"""
-    browser.get(browser.current_url + 'index.php?route=product/product&language=en-gb&product_id=49&path=57')
-    test_check_url = browser.current_url
-    if test_check_url != 'http://localhost/index.php?route=product/product&language=en-gb&product_id=49&path=57':
-        raise ValueError(f'Адреса не равны: {test_check_url}')
-    WebDriverWait(browser, 1).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="header-cart"]/div/button')))
+    BM(browser=browser).add_to_the_link_in_the_browser(link_continuation='index.php?route=product/product&language=en-gb&product_id=49&path=57')
+    BM(browser=browser).comparing_the_current_address(address='http://localhost/index.php?route=product/product&language=en-gb&product_id=49&path=57')
+    BM(browser=browser).element_visibility(selector='//*[@id="header-cart"]/div/button')
+    BM(browser=browser).element_clickable(selector='//*[@id="button-cart"]')
+    BM(browser=browser).element_visibility(selector='//*[@id="content"]/ul/li[2]/a')
+    BM(browser=browser).not_element_visibility(selector='//*[@id="test"]/input[3]')
 
-    WebDriverWait(browser, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="button-cart"]')))
-    WebDriverWait(browser, 1).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="content"]/ul/li[2]/a')))
-    WebDriverWait(browser, 1).until_not(EC.visibility_of_element_located((By.XPATH, '//*[@id="test"]/input[3]')))
 
 def test_administration_page(browser):
     """Проверка элементов на странице <админки>"""
-    browser.get(browser.current_url + 'admin/')
-    test_check_url = browser.current_url
-    if test_check_url != 'http://localhost/admin/':
-        raise ValueError(f'Адреса не равны: {test_check_url}')
+    AP(browser=browser).go_to_admin_page()
+    AP(browser=browser).check_elem_on_page()
     
-    WebDriverWait(browser, 1).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="header"]/div/a')))
-    WebDriverWait(browser, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="input-username"]')))
-    WebDriverWait(browser, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="input-password"]')))
-    WebDriverWait(browser, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="form-login"]/div[3]/button')))
     
 def test_register_page(browser):
     """Проверка элементов на странице <регистрации>"""
-    browser.get(browser.current_url + 'index.php?route=account/register')
-    test_check_url = browser.current_url
-    if test_check_url != 'http://localhost/index.php?route=account/register':
-        raise ValueError(f'Адреса не равны: {test_check_url}')   
+    BM(browser=browser).add_to_the_link_in_the_browser(link_continuation='index.php?route=account/register')
+    BM(browser=browser).comparing_the_current_address(address='http://localhost/index.php?route=account/register')
+    RP(browser=browser).check_elem_on_page()
     
-    WebDriverWait(browser, 1).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="input-firstname"]')))
-    WebDriverWait(browser, 1).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="input-password"]')))
-    WebDriverWait(browser, 1).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="account-register"]/ul/li[3]/a')))
-    WebDriverWait(browser, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="logo"]')))
 
 
     
