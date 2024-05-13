@@ -4,25 +4,17 @@ from selenium.webdriver import Remote
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+from page_object.main_page import Main_Page as MP
+from page_object.base_method import Base_Method as BM
+from page_object.category_product_page import Category_Page as CP
 
 
 def test_switch_currency(browser: Remote):
     """Меняю валюту и проверяю на главное странице что она изменилась"""
-    WebDriverWait(browser, 1).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="form-currency"]/div/a'))).click() # Открываю выбор валют
-    WebDriverWait(browser, 2).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="form-currency"]/div/ul/li[3]/a'))).click() # Выбираю доллары
-    
-    element = browser.find_element(By.XPATH, '//*[@id="content"]/div[2]/div[1]/div/div[2]/div/div/span[1]') #Записываем элемент в переменную
-    browser.execute_script("arguments[0].scrollIntoView(true);", element) # Прокручиваем к элементу
+    MP(browser=browser).change_currency_to_dollar()
+    MP(browser=browser).check_elem_take_dollars(selector='//*[@id="content"]/div[2]/div[1]/div/div[2]/div/div/span[1]')
+    BM(browser=browser).click_to_element(selector='//*[@id="content"]/div[2]/div[1]/div/div[2]/form/div/button[1]')
+    BM(browser=browser).scrolling_to_elem(selector='//*[@id="header-cart"]/div/button')
     time.sleep(2)
+    MP(browser=browser).check_elem_take_dollars(selector='//*[@id="header-cart"]/div/button')
     
-    if element.text != '$602.00': # Проверяю что цена в долларах
-         raise ValueError(f'Цена не изменилась на доллары на товаре: {element.text}')
-    browser.find_element(By.XPATH, '//*[@id="content"]/div[2]/div[1]/div/div[2]/form/div/button[1]').click()
-
-    element = browser.find_element(By.XPATH, '//*[@id="header-cart"]/div/button')
-    browser.execute_script("arguments[0].scrollIntoView(true);", element) # Прокручиваем к корзине
-    time.sleep(2)
-
-    element = browser.find_element(By.XPATH, '//*[@id="header-cart"]/div/button')
-    if element.text != '1 item(s) - $602.00': # Проверяю что цена в долларах
-         raise ValueError(f'Цена не изменилась на доллары в корзине: {element.text}')
