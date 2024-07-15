@@ -2,10 +2,10 @@ from python:3.10-alpine
 
 WORKDIR /test_opencart
 
-COPY requarements.txt ./
+COPY requirements.txt ./
 
 RUN pip install -U pip
-RUN pip install -r requarements.txt
+RUN pip install -r requirements.txt
 RUN mkdir screen_shot
 
 COPY ./ ./
